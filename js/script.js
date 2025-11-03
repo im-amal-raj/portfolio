@@ -53,7 +53,7 @@ window.addEventListener("load", () => {
   if (window.location.hash) {
     history.replaceState(null, null, " "); // clears the #hash
   }
-  window.scrollTo({ top: 0, behavior: "instant" || "auto" });
+  window.scrollTo({ top: 0, behavior: "auto" });
 });
 
 // --- Fade-in on Scroll Animation ---

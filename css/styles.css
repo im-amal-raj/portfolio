@@ -46,7 +46,7 @@ body {
   height: 100vh;
   padding: 90px 80px;
   box-sizing: border-box;
-  overflow: visible;
+  overflow-y: auto;
   background: transparent;
 }
 .sidebar::-webkit-scrollbar {
