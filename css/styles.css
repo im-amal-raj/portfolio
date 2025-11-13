@@ -87,8 +87,8 @@ ul li {
 }
 /* NEW STYLES for Font Awesome <i> tags */
 .sidebar ul li a i {
-  font-size: 26px;     /* Your new, smaller size */
-  color: white;        /* White fill */
+  font-size: 26px; /* Your new, smaller size */
+  color: white; /* White fill */
   margin-top: 30px;
   display: inline-block;
   transition: transform 0.22s ease, filter 0.22s ease;
@@ -268,17 +268,17 @@ section {
 
 /* --- Services Section Styles --- */
 .service-card {
-  display: block; 
+  display: block;
 }
 
 .service-card h4 {
-  color: #e1e8f0; 
+  color: #e1e8f0;
 }
 
 .service-cta {
   display: inline-flex;
   align-items: center;
-  gap: 8px; 
+  gap: 8px;
   margin-top: 20px;
   font-weight: 700;
   color: #e1e8f0;
@@ -287,8 +287,8 @@ section {
 }
 
 .service-cta:hover {
-  color: #64ffda; 
-  gap: 12px; 
+  color: #64ffda;
+  gap: 12px;
 }
 
 .service-cta .arrow {

@@ -1,86 +1,81 @@
-// Function to handle mouse movement
+// --- 1. SPOTLIGHT EFFECT ---
+// This function is perfect as-is.
 const updateSpotlight = (e) => {
-  // Get the mouse coordinates relative to the viewport
   const mouseX = e.clientX;
   const mouseY = e.clientY;
-
-  // Set the CSS Custom Properties on the body (or your main container)
-  // *** Crucial: We must include the 'px' unit for the CSS to work ***
-  document.body.style.setProperty("--mouse-x", `${mouseX}px`);
-  document.body.style.setProperty("--mouse-y", `${mouseY}px`);
+  // We use document.documentElement to set it on the <html> tag
+  document.documentElement.style.setProperty("--mouse-x", `${mouseX}px`);
+  document.documentElement.style.setProperty("--mouse-y", `${mouseY}px`);
 };
-
-// Add the event listener to track the mouse across the entire document
 document.addEventListener("mousemove", updateSpotlight);
 
-document.addEventListener("DOMContentLoaded", () => {
-  const navLinks = document.querySelectorAll(".nav-link");
-  const sections = document.querySelectorAll("section");
-
-  // Remove all active classes initially
-  navLinks.forEach((link) => link.classList.remove("active"));
-
-  // On scroll — highlight the section in view
-  window.addEventListener("scroll", () => {
-    let current = "";
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop - 120; // offset to match your layout
-      const sectionHeight = section.clientHeight;
-      if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-        current = section.getAttribute("id");
-      }
-    });
-
-    navLinks.forEach((link) => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === `#${current}`) {
-        link.classList.add("active");
-      }
-    });
-  });
-
-  // On click — set active immediately
-  navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.forEach((l) => l.classList.remove("active"));
-      link.classList.add("active");
-    });
-  });
-});
-
+// --- 2. PAGE LOAD BEHAVIOR ---
+// This is also great. It clears any #hash from the URL on load.
 window.addEventListener("load", () => {
-  // Prevent restoring previous hash scroll position
   if (window.location.hash) {
     history.replaceState(null, null, " "); // clears the #hash
   }
   window.scrollTo({ top: 0, behavior: "auto" });
 });
 
-// --- Fade-in on Scroll Animation ---
-
+// --- 3. ALL DOM-READY LOGIC ---
+// We combine BOTH of your 'DOMContentLoaded' functions into ONE.
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Get all the elements you want to fade in
-  const elementsToFade = document.querySelectorAll(".fade-in");
-
-  // 2. Set up the "Intersection Observer"
-  const observer = new IntersectionObserver(
+  
+  // --- FADE-IN ANIMATION (Your code, which is great) ---
+  const fadeElements = document.querySelectorAll(".fade-in");
+  const fadeObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        // If the element is on screen (is intersecting)
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
-          // We don't need to watch it anymore
-          observer.unobserve(entry.target);
+          fadeObserver.unobserve(entry.target);
         }
       });
     },
-    {
-      threshold: 0.1, // Trigger when 10% of the item is visible
-    }
+    { threshold: 0.1 }
+  );
+  fadeElements.forEach((element) => fadeObserver.observe(element));
+
+  // --- OPTIMIZED ACTIVE NAVIGATION (Replaces your 'scroll' listener) ---
+  const navLinks = document.querySelectorAll(".nav-link");
+  const sections = document.querySelectorAll("section");
+
+  const navObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        // When a section is 50% visible...
+        if (entry.isIntersecting) {
+          // Get the ID of the visible section
+          const id = entry.target.getAttribute("id");
+          const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+          
+          // Remove 'active' from all links
+          navLinks.forEach((link) => link.classList.remove("active"));
+          
+          // Add 'active' to the one that matches the visible section
+          if (activeLink) {
+            activeLink.classList.add("active");
+          }
+        }
+      });
+    },
+    { 
+      rootMargin: "0px",
+      threshold: 0.5 // Triggers when 50% of the section is in view
+    } 
   );
 
-  // 3. Tell the observer to watch each of your elements
-  elementsToFade.forEach((element) => {
-    observer.observe(element);
+  // Tell the navObserver to watch all your <section> elements
+  sections.forEach((section) => navObserver.observe(section));
+
+  // --- CLICK TO SET ACTIVE (Keeps the sidebar snappy) ---
+  // We keep this so the link becomes active *immediately* on click,
+  // before the scroll has even finished.
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      navLinks.forEach((l) => l.classList.remove("active"));
+      link.classList.add("active");
+    });
   });
 });
